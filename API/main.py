@@ -10,6 +10,7 @@ async def root():
     f.inserir_cidade("São Paulo")
     f.inserir_cidade("Rio de Janeiro")
     f.inserir_cidade("Belo Horizonte")
+    f.inserir_cidade("Cidade de Sol")
     f.inserir_predio("Prédio 2", "Residencial", "São Paulo")
     f.inserir_predio("Prédio 1", "ApartLuxo", "Rio de Janeiro")
     f.inserir_predio("Prédio 3", "Comercial", "São Paulo")
