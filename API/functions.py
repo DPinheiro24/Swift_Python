@@ -5,7 +5,8 @@ bd = "mundo.db"
 conn = sqlite3.connect(bd)
 cursor = conn.cursor()
 
-def criar_bd(): # Função para criar o banco de dados e inserir dados iniciais
+
+def criar_bd():  # Função para criar o banco de dados e inserir dados iniciais
 
     sql = """
     CREATE TABLE cidade (
@@ -54,7 +55,8 @@ def criar_bd(): # Função para criar o banco de dados e inserir dados iniciais
 
     pass
 
-def inserir_cidade(nome): # Função para inserir uma cidade
+
+def inserir_cidade(nome):  # Função para inserir uma cidade
 
     sql = """
     select cidade_id from cidade where cidade_nome = (?);
@@ -65,22 +67,26 @@ def inserir_cidade(nome): # Função para inserir uma cidade
 
     if aux is not None:
         print("Cidade já existe")
-        return "Cidade já existe"
+        return {"message": "Cidade já existe"}
     else:
         print("A criar cidade com nome: " + nome)
 
-    sql = """
-    insert into cidade (cidade_nome) values (?);
-    """
+    sql_insert = """
+       INSERT INTO cidade (cidade_nome) VALUES (?);
+       """
 
-    conn.execute(sql, (nome,))
-
+    conn.execute(sql_insert, (nome,))
     conn.commit()
 
-    pass
+    cidade_dict = {
+        "cidade_nome": nome
+    }
 
-def inserir_predio(nome, tipo, cidade): # Função para inserir um prédio
-    
+    return cidade_dict
+
+
+def inserir_predio(nome, tipo, cidade):  # Função para inserir um prédio
+
     sql = """
     select predio_id from predio where predio_nome = (?);
     """
@@ -105,9 +111,16 @@ def inserir_predio(nome, tipo, cidade): # Função para inserir um prédio
         print("Algo deu errado, tentou-se criar um predio com estes valores: " + nome + ", " + tipo + ", " + cidade)
         return "Aconteceu um erro, verifique os valores inseridos"
 
-    pass
+    predio_dict = {
+        "predio_nome": nome,
+        "predio_tipo": tipo,
+        "cidade_id": cidade
+    }
 
-def inserir_pessoa(nome, emprego, predio): # Função para inserir uma pessoa
+    return predio_dict
+
+
+def inserir_pessoa(nome, emprego, predio):  # Função para inserir uma pessoa
 
     sql = """
     select pessoa_id from pessoa where pessoa_nome = (?) and emprego = (?) and predio_id = (?);
@@ -133,25 +146,34 @@ def inserir_pessoa(nome, emprego, predio): # Função para inserir uma pessoa
         print("Algo deu errado, tentou-se criar uma pessoa com estes valores: " + nome + ", " + emprego + ", " + predio)
         return "Aconteceu um erro, verifique os valores inseridos"
 
-    pass
+    pessoa_dict = {
+        "pessoa_nome": nome,
+        "emprego": emprego,
+        "predio_id": predio
+    }
 
-def listar_cidades(): # Função para listar as cidades
+    return pessoa_dict
 
+
+def listar_cidades():
     sql = """
-    select cidade_id, cidade_nome from cidade;
+    SELECT cidade_id, cidade_nome FROM cidade;
     """
-    
     cursor.execute(sql)
-    aux = cursor.fetchall()
+    cidades = cursor.fetchall()
 
-    for i in aux:
-        print(i);
+    cidades_list = []
+    for cidade in cidades:
+        cidade_dict = {
+            'cidade_id': cidade[0],
+            'cidade_nome': cidade[1]
+        }
+        cidades_list.append(cidade_dict)
 
-    return aux
+    return cidades_list
 
-    pass
 
-def listar_pessoas(): # Função para listar as pessoas
+def listar_pessoas():  # Função para listar as pessoas
 
     sql = """
     SELECT pessoa_id, pessoa_nome, emprego, predio_id FROM pessoa ;
@@ -173,7 +195,8 @@ def listar_pessoas(): # Função para listar as pessoas
 
     pass
 
-def listar_pessoa(nome: str): # Função para listar dados da pessoa
+
+def listar_pessoa(nome: str):  # Função para listar dados da pessoa
     sql = """
     SELECT pessoa_id, pessoa_nome, emprego, predio_id FROM pessoa WHERE pessoa_nome = ?;
     """
@@ -192,25 +215,58 @@ def listar_pessoa(nome: str): # Função para listar dados da pessoa
         return {"error": "Pessoa não encontrada"}
 
 
-def listar_pessoas_predio(nome: str): # Função para listar pessoas de um prédio
+def listar_pessoas_predio(nome: str):  # Função para listar pessoas de um prédio
     sql = """
-    SELECT pessoa_id, pessoa_nome, emprego FROM pessoa WHERE pessoa_nome = ?;
-    """
+        SELECT predio_id FROM predio WHERE predio_nome = ?;
+        """
+
     cursor.execute(sql, (nome,))
+    predio = cursor.fetchone()
+    print(predio[0])
+    if predio is None:
+        print("Prédio não encontrado")
+        return []
+
+    sql = """
+            SELECT pessoa_nome, emprego
+            FROM pessoa
+            WHERE predio_id = ?;
+            """
+
+    cursor.execute(sql, (predio[0],))
     pessoas = cursor.fetchall()
 
     pessoas_list = []
     for pessoa in pessoas:
         pessoa_dict = {
-            'pessoa_id': pessoa[0],
-            'pessoa_nome': pessoa[1],
-            'emprego': pessoa[2]
+            'pessoa_nome': pessoa[0],
+            'emprego': pessoa[1]
         }
         pessoas_list.append(pessoa_dict)
 
     return pessoas_list
 
-def adquirir_cidade(nome: str): # Função para mostrar todos os predios da cidade
+def listar_predios():  # Função para listar os prédios
+    sql = """
+    SELECT predio_id, predio_nome, predio_tipo, cidade_id FROM predio;
+    """
+    cursor.execute(sql)
+    aux = cursor.fetchall()
+
+    predios = []
+    for predio in aux:
+        predio_dict = {
+            'predio_id': predio[0],
+            'predio_nome': predio[1],
+            'predio_tipo': predio[2],
+            'cidade_id': predio[3]
+        }
+        predios.append(predio_dict)
+
+    return predios
+
+
+def adquirir_cidade(nome: str):  # Função para mostrar todos os predios da cidade
 
     sql = """
     SELECT cidade_nome from cidade where cidade_nome = (?); 
@@ -241,3 +297,160 @@ def adquirir_cidade(nome: str): # Função para mostrar todos os predios da cida
         print(predios)
 
         return predios
+
+def deletar_cidade(nome: str):  # Função para deletar uma cidade
+    sql = """
+       SELECT cidade_id FROM cidade WHERE cidade_nome = ?; 
+       """
+
+    cursor.execute(sql, (nome,))
+    cidade = cursor.fetchone()
+
+    if cidade is None:
+        print("Cidade não existe")
+        return "Cidade não existe"
+    else:
+        print("Cidade existe " + str(cidade[0]))
+        sql_delete_predios = """
+           DELETE FROM predio WHERE cidade_id = ?;
+           """
+        cursor.execute(sql_delete_predios, (cidade[0],))
+
+        sql_delete_cidade = """
+           DELETE FROM cidade WHERE cidade_nome = ?;
+           """
+        cursor.execute(sql_delete_cidade, (nome,))
+
+        conn.commit()
+
+        return "Cidade e seus prédios foram deletados com sucesso"
+
+def deletar_predio(nome: str):  # Função para deletar um predio
+    sql_select_predio = """
+        SELECT predio_id FROM predio WHERE predio_nome = ?; 
+        """
+
+    cursor.execute(sql_select_predio, (nome,))
+    predio = cursor.fetchone()
+
+    if predio is None:
+        print("Prédio não existe")
+        return "Prédio não existe"
+    else:
+        print("Prédio existe: " + str(predio[0]))
+
+        predio_id = predio[0]
+
+        # Deletar todas as pessoas do prédio
+        sql_delete_pessoas = """
+            DELETE FROM pessoa WHERE predio_id = ?;
+            """
+        cursor.execute(sql_delete_pessoas, (predio_id,))
+
+        # Deletar o prédio
+        sql_delete_predio = """
+            DELETE FROM predio WHERE predio_id = ?;
+            """
+        cursor.execute(sql_delete_predio, (predio_id,))
+
+        conn.commit()
+
+        return "Prédio e suas pessoas foram deletados com sucesso"
+
+def deletar_pessoa(nome: str):  # Função para deletar uma pessoa
+
+    sql = """
+    SELECT pessoa_id from pessoa where pessoa_nome = (?); 
+    """
+
+    cursor.execute(sql, (nome,))
+
+    aux = cursor.fetchone()
+
+    if aux is None:
+        print("Pessoa não existe")
+        return "Pessoa não existe"
+    else:
+        print("Pessoa existe " + str (aux[0]))
+        sql = """
+        DELETE FROM pessoa WHERE pessoa_nome = ?;
+        """
+
+        cursor.execute(sql, (nome,))
+
+        conn.commit()
+
+        return "Pessoa deletada com sucesso"
+def atualizar_cidade(nome: str, novo_nome: str):  # Função para atualizar uma cidade
+
+    sql = """
+    SELECT cidade_id from cidade where cidade_nome = (?); 
+    """
+
+    cursor.execute(sql, (nome,))
+
+    aux = cursor.fetchone()
+
+    if aux is None:
+        print("Cidade não existe")
+        return "Cidade não existe"
+    else:
+        print("Cidade existe " + str( aux[0]))
+        sql = """
+        UPDATE cidade SET cidade_nome = ? WHERE cidade_nome = ?;
+        """
+
+        cursor.execute(sql, (novo_nome, nome))
+
+        conn.commit()
+
+        return "Cidade atualizada com sucesso"
+def atualizar_predio(nome: str, novo_nome: str, novo_tipo: str, nova_cidade: str):  # Função para atualizar um predio
+
+    sql_check = """
+        SELECT predio_id FROM predio WHERE predio_nome = ?;
+        """
+
+    cursor.execute(sql_check, (nome,))
+    predio = cursor.fetchone()
+
+    if predio is None:
+        print("Predio não existe")
+        return "Predio não existe"
+    else:
+        print("Predio existe " + str(predio[0]))
+        sql_update = """
+            UPDATE predio SET predio_nome = ?, predio_tipo = ?, cidade_id = (
+                SELECT cidade_id FROM cidade WHERE cidade_nome = ?
+            ) WHERE predio_id = ?;
+            """
+
+        cursor.execute(sql_update, (novo_nome, novo_tipo, nova_cidade, predio[0]))
+
+        conn.commit()
+
+        return "Predio atualizado com sucesso"
+
+def atualizar_pessoa(nome: str, novo_nome: str, novo_emprego: str, novo_predio: int):  # Função para atualizar uma pessoa
+
+    sql_check = """
+        SELECT pessoa_id FROM pessoa WHERE pessoa_nome = ?;
+        """
+
+    cursor.execute(sql_check, (nome,))
+    pessoa = cursor.fetchone()
+
+    if pessoa is None:
+        print("Pessoa não existe")
+        return "Pessoa não existe"
+    else:
+        print("Pessoa existe " + str(pessoa[0]))
+        sql_update = """
+            UPDATE pessoa SET pessoa_nome = ?, emprego = ?, predio_id = ? WHERE pessoa_id = ?;
+            """
+
+        cursor.execute(sql_update, (novo_nome, novo_emprego, novo_predio, pessoa[0]))
+
+        conn.commit()
+
+        return "Pessoa atualizada com sucesso"
