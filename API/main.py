@@ -18,32 +18,27 @@ async def root():
     f.inserir_pessoa("Maria", "Professora", "Prédio 2")
     f.inserir_pessoa("Diogo", "Ladrão", "Prédio 3")
     return {"message": "BD Created"}
+"Função para criar o banco de dados e inserir dados iniciais"
 
 @app.get("/cidades")
 async def get_cidades(nome: str = None):
     return f.listar_cidades()
+"Retorna todas as cidades cadastradas"
 
 @app.get("/cidade/{nome}")
 async def get_cidade(nome: str):
-    #nome_cidade = nome.replace(" ", "")
-    """cidade = f.listar_cidade(nome)
-    if cidade and 'cidade_id' in cidade:
-        predios = f.listar_predios(cidade['cidade_id'])
-        cidade['predios'] = predios
-        return cidade
-    else:
-        return {"error": "Cidade não encontrada"}
-    """
     return f.adquirir_cidade(nome)
+"Ao passar o nome da cidade, retorna todos os prédios da cidade"
 
 @app.get("/pessoas")
 async def listar_pessoas():
     return f.listar_pessoas()
+"Lista todas as pessoas cadastradas"
 
 @app.get("/pessoa/{nome}")
 async def get_pessoa(nome: str):
     return f.listar_pessoa(nome)
-
+" Lista toda a informação de uma pessoa"
 @app.get("/hello/{name}")
 async def say_hello(name: str):
     return {"message": f"Hello {name}"}

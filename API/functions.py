@@ -5,7 +5,7 @@ bd = "mundo.db"
 conn = sqlite3.connect(bd)
 cursor = conn.cursor()
 
-def criar_bd():
+def criar_bd(): # Função para criar o banco de dados e inserir dados iniciais
 
     sql = """
     CREATE TABLE cidade (
@@ -54,7 +54,7 @@ def criar_bd():
 
     pass
 
-def inserir_cidade(nome):
+def inserir_cidade(nome): # Função para inserir uma cidade
 
     sql = """
     select cidade_id from cidade where cidade_nome = (?);
@@ -79,7 +79,7 @@ def inserir_cidade(nome):
 
     pass
 
-def inserir_predio(nome, tipo, cidade):
+def inserir_predio(nome, tipo, cidade): # Função para inserir um prédio
     
     sql = """
     select predio_id from predio where predio_nome = (?);
@@ -107,7 +107,7 @@ def inserir_predio(nome, tipo, cidade):
 
     pass
 
-def inserir_pessoa(nome, emprego, predio):
+def inserir_pessoa(nome, emprego, predio): # Função para inserir uma pessoa
 
     sql = """
     select pessoa_id from pessoa where pessoa_nome = (?) and emprego = (?) and predio_id = (?);
@@ -135,7 +135,7 @@ def inserir_pessoa(nome, emprego, predio):
 
     pass
 
-def listar_cidades():
+def listar_cidades(): # Função para listar as cidades
 
     sql = """
     select cidade_id, cidade_nome from cidade;
@@ -151,23 +151,7 @@ def listar_cidades():
 
     pass
 
-def listar_cidade(nome: str):
-    sql = """
-        SELECT cidade_id, cidade_nome FROM cidade WHERE cidade_nome = ?;
-        """
-    cursor.execute(sql, (nome,))
-    cidade = cursor.fetchone()
-
-    if cidade:
-        cidade_dict = {
-            'cidade_id': cidade[0],
-            'cidade_nome': cidade[1]
-        }
-        return cidade_dict
-    else:
-        return {"error": "Cidade não encontrada"}
-
-def listar_pessoas():
+def listar_pessoas(): # Função para listar as pessoas
 
     sql = """
     SELECT pessoa_id, pessoa_nome, emprego, predio_id FROM pessoa ;
@@ -189,7 +173,7 @@ def listar_pessoas():
 
     pass
 
-def listar_pessoa(nome: str):
+def listar_pessoa(nome: str): # Função para listar dados da pessoa
     sql = """
     SELECT pessoa_id, pessoa_nome, emprego, predio_id FROM pessoa WHERE pessoa_nome = ?;
     """
@@ -206,26 +190,9 @@ def listar_pessoa(nome: str):
         return pessoa_dict
     else:
         return {"error": "Pessoa não encontrada"}
-    
-def listar_predios(cidade_id: int):
-    sql = """
-    SELECT predio_id, predio_nome, predio_tipo FROM predio WHERE cidade_id = ?;
-    """
-    cursor.execute(sql, (cidade_id,))
-    predios = cursor.fetchall()
 
-    predios_list = []
-    for predio in predios:
-        predio_dict = {
-            'predio_id': predio[0],
-            'predio_nome': predio[1],
-            'predio_tipo': predio[2]
-        }
-        predios_list.append(predio_dict)
 
-    return predios_list
-
-def listar_pessoas_predio(nome: str):
+def listar_pessoas_predio(nome: str): # Função para listar pessoas de um prédio
     sql = """
     SELECT pessoa_id, pessoa_nome, emprego FROM pessoa WHERE pessoa_nome = ?;
     """
@@ -243,7 +210,7 @@ def listar_pessoas_predio(nome: str):
 
     return pessoas_list
 
-def adquirir_cidade(nome: str):
+def adquirir_cidade(nome: str): # Função para mostrar todos os predios da cidade
 
     sql = """
     SELECT cidade_nome from cidade where cidade_nome = (?); 
@@ -259,7 +226,7 @@ def adquirir_cidade(nome: str):
     else:
         print("Cidade existe " + aux[0])
         sql = """
-        SELECT p.predio_id, p.predio_nome, p.predio_tipo
+        SELECT p.predio_nome, p.predio_tipo
         FROM predio p
         JOIN cidade c ON p.cidade_id = c.cidade_nome
         WHERE c.cidade_nome = ?;
