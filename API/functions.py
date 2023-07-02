@@ -299,23 +299,44 @@ def adquirir_cidade(nome: str):  # Função para mostrar todos os predios da cid
         return predios
 
 def deletar_cidade(nome: str):  # Função para deletar uma cidade
-    sql = """
+    sql_select_cidade = """
        SELECT cidade_id FROM cidade WHERE cidade_nome = ?; 
        """
 
-    cursor.execute(sql, (nome,))
+    cursor.execute(sql_select_cidade, (nome,))
     cidade = cursor.fetchone()
 
     if cidade is None:
         print("Cidade não existe")
         return "Cidade não existe"
     else:
-        print("Cidade existe " + str(cidade[0]))
-        sql_delete_predios = """
-           DELETE FROM predio WHERE cidade_id = ?;
-           """
-        cursor.execute(sql_delete_predios, (cidade[0],))
+        print("Cidade existe: " + str(cidade[0]))
 
+        cidade_id = cidade[0]
+
+        # Deletar todos os prédios da cidade e suas pessoas associadas
+        sql_select_predios = """
+           SELECT predio_id FROM predio WHERE cidade_id = ?;
+           """
+        cursor.execute(sql_select_predios, (cidade_id,))
+        predios = cursor.fetchall()
+
+        for predio in predios:
+            predio_id = predio[0]
+
+            # Deletar todas as pessoas do prédio
+            sql_delete_pessoas = """
+               DELETE FROM pessoa WHERE predio_id = ?;
+               """
+            cursor.execute(sql_delete_pessoas, (predio_id,))
+
+            # Deletar o prédio
+            sql_delete_predio = """
+               DELETE FROM predio WHERE predio_id = ?;
+               """
+            cursor.execute(sql_delete_predio, (predio_id,))
+
+        # Deletar a cidade
         sql_delete_cidade = """
            DELETE FROM cidade WHERE cidade_nome = ?;
            """
@@ -323,7 +344,7 @@ def deletar_cidade(nome: str):  # Função para deletar uma cidade
 
         conn.commit()
 
-        return "Cidade e seus prédios foram deletados com sucesso"
+        return "Cidade, prédios e pessoas foram deletados com sucesso"
 
 def deletar_predio(nome: str):  # Função para deletar um predio
     sql_select_predio = """
