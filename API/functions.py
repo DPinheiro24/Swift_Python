@@ -261,7 +261,7 @@ def adquirir_cidade(nome: str):
         sql = """
         SELECT p.predio_id, p.predio_nome, p.predio_tipo
         FROM predio p
-        JOIN cidade c ON p.cidade_id = c.cidade_id
+        JOIN cidade c ON p.cidade_id = c.cidade_nome
         WHERE c.cidade_nome = ?;
         """
 
