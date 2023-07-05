@@ -12,9 +12,9 @@ async def root():
     f.inserir_cidade("Belo Horizonte")
     f.inserir_cidade("Cidade de Sol")
     f.inserir_predio("Prédio 2", "Residencial", "São Paulo")
-    f.inserir_predio("Prédio 1", "ApartLuxo", "Rio de Janeiro")
+    f.inserir_predio("Prédio1", "ApartLuxo", "Rio de Janeiro")
     f.inserir_predio("Prédio 3", "Comercial", "São Paulo")
-    f.inserir_pessoa("João", "Professor", "Prédio 1")
+    f.inserir_pessoa("João", "Professor", "Prédio1")
     f.inserir_pessoa("Maria", "Professora", "Prédio 2")
     f.inserir_pessoa("Diogo", "Ladrão", "Prédio 2")
     return {"message": "BD Created"}

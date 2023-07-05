@@ -217,7 +217,7 @@ def listar_pessoa(nome: str):  # Função para listar dados da pessoa
 
 def listar_pessoas_predio(nome: str):  # Função para listar pessoas de um prédio
     sql = """
-        SELECT predio_id FROM predio WHERE predio_nome = ?;
+        SELECT predio_nome FROM predio WHERE predio_nome = ?;
         """
 
     cursor.execute(sql, (nome,))
@@ -300,7 +300,7 @@ def adquirir_cidade(nome: str):  # Função para mostrar todos os predios da cid
 
 def deletar_cidade(nome: str):  # Função para deletar uma cidade
     sql_select_cidade = """
-       SELECT cidade_id FROM cidade WHERE cidade_nome = ?; 
+       SELECT cidade_nome FROM cidade WHERE cidade_nome = ?; 
        """
 
     cursor.execute(sql_select_cidade, (nome,))
@@ -316,7 +316,7 @@ def deletar_cidade(nome: str):  # Função para deletar uma cidade
 
         # Deletar todos os prédios da cidade e suas pessoas associadas
         sql_select_predios = """
-           SELECT predio_nome FROM predio WHERE cidade_id = ?;
+           SELECT predio_nome FROM predio WHERE cidade_nome = ?;
            """
         cursor.execute(sql_select_predios, (cidade_id,))
         predios = cursor.fetchall()
@@ -348,7 +348,7 @@ def deletar_cidade(nome: str):  # Função para deletar uma cidade
 
 def deletar_predio(nome: str):  # Função para deletar um predio
     sql_select_predio = """
-        SELECT predio_id FROM predio WHERE predio_nome = ?; 
+        SELECT predio_nome FROM predio WHERE predio_nome = ?; 
         """
 
     cursor.execute(sql_select_predio, (nome,))
