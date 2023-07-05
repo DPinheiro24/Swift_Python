@@ -4,6 +4,7 @@ import control_unit as admin
 bd = "mundo.db"
 conn = sqlite3.connect(bd)
 cursor = conn.cursor()
+level = 0
 
 
 def criar_bd():  # Função para criar o banco de dados e inserir dados iniciais
@@ -475,3 +476,18 @@ def atualizar_pessoa(nome: str, novo_nome: str, novo_emprego: str, novo_predio: 
         conn.commit()
 
         return "Pessoa atualizada com sucesso"
+
+
+def atualizar_code(code: int):
+
+    if code == 1337:
+        level = 1
+        print("Código correto! Têm agora permissões de Morador - " + str(level))
+        return admin.pass_success("Código correto! Têm agora permissões de Morador")
+    elif code == 1234:
+        level = 2
+        print("Código correto! Têm agora permissões de Visitante - " + str(level))
+        return admin.pass_success("Código correto! Têm agora permissões de Admin")
+    else:
+        return admin.pass_error("Código incorreto! Continua com permissões de Visitante")
+

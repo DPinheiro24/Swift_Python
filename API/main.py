@@ -94,3 +94,7 @@ async def atualizar_pessoa(nome: str, novo_nome: str, novo_emprego: str, novo_pr
     return f.atualizar_pessoa(nome, novo_nome, novo_emprego, novo_predio)
 #Atualiza o nome, emprego e prédio de uma pessoa
 
+@app.get("/code/{code}")
+async def atualizar_code(code: int):
+    return f.atualizar_code(code)
+
