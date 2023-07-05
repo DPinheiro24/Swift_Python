@@ -58,6 +58,8 @@ def criar_bd():  # Função para criar o banco de dados e inserir dados iniciais
 
 
 def inserir_cidade(nome):  # Função para inserir uma cidade
+    if level == 0 or level == 1:
+        return admin.pass_error("Você não tem permissão para criar uma cidade")
 
     sql = """
     select cidade_id from cidade where cidade_nome = (?);
@@ -87,6 +89,8 @@ def inserir_cidade(nome):  # Função para inserir uma cidade
 
 
 def inserir_predio(nome, tipo, cidade):  # Função para inserir um prédio
+    if level == 0 or level == 1:
+        return admin.pass_error("Você não tem permissão para criar um predio")
 
     sql = """
     select predio_id from predio where predio_nome = (?);
@@ -122,6 +126,8 @@ def inserir_predio(nome, tipo, cidade):  # Função para inserir um prédio
 
 
 def inserir_pessoa(nome, emprego, predio):  # Função para inserir uma pessoa
+    if level == 0 or level == 1:
+        return admin.pass_error("Você não tem permissão para criar uma pessoa")
 
     sql = """
     select pessoa_id from pessoa where pessoa_nome = (?) and emprego = (?) and predio_nome = (?);
@@ -175,7 +181,8 @@ def listar_cidades():
 
 
 def listar_pessoas():  # Função para listar as pessoas
-
+    if level == 0:
+        return admin.pass_error("Você não tem permissão para executar esta função")
     sql = """
     SELECT pessoa_id, pessoa_nome, emprego, predio_nome FROM pessoa ;
     """
@@ -198,6 +205,9 @@ def listar_pessoas():  # Função para listar as pessoas
 
 
 def listar_pessoa(nome: str):  # Função para listar dados da pessoa
+    if level == 0:
+        return admin.pass_error("Você não tem permissão para executar esta função")
+    # Morador tem permissao pra ver o id, nome, emprego e predio da pessoa, vamos criar mais dados que so o admin pode ver
     sql = """
     SELECT pessoa_id, pessoa_nome, emprego, predio_nome FROM pessoa WHERE pessoa_nome = ?;
     """
@@ -217,6 +227,9 @@ def listar_pessoa(nome: str):  # Função para listar dados da pessoa
 
 
 def listar_pessoas_predio(nome: str):  # Função para listar pessoas de um prédio
+    if level == 0:
+        return admin.pass_error("Você não tem permissão para executar esta função")
+
     sql = """
         SELECT predio_nome FROM predio WHERE predio_nome = ?;
         """
@@ -300,6 +313,9 @@ def adquirir_cidade(nome: str):  # Função para mostrar todos os predios da cid
         return predios
 
 def deletar_cidade(nome: str):  # Função para deletar uma cidade
+    if level == 0 or level == 1:
+        return admin.pass_error("Você não tem permissão para apagar a cidade")
+
     sql_select_cidade = """
        SELECT cidade_nome FROM cidade WHERE cidade_nome = ?; 
        """
@@ -348,6 +364,9 @@ def deletar_cidade(nome: str):  # Função para deletar uma cidade
         return "Cidade, prédios e pessoas foram deletados com sucesso"
 
 def deletar_predio(nome: str):  # Função para deletar um predio
+    if level == 0 or level == 1:
+        return admin.pass_error("Você não tem permissão para apagar o prédio")
+
     sql_select_predio = """
         SELECT predio_nome FROM predio WHERE predio_nome = ?; 
         """
@@ -380,7 +399,8 @@ def deletar_predio(nome: str):  # Função para deletar um predio
         return "Prédio e suas pessoas foram deletados com sucesso"
 
 def deletar_pessoa(nome: str):  # Função para deletar uma pessoa
-
+    if level == 0 or level == 1:
+        return admin.pass_error("Você não tem permissão para apagar uma pessoa")
     sql = """
     SELECT pessoa_id from pessoa where pessoa_nome = (?); 
     """
@@ -404,7 +424,8 @@ def deletar_pessoa(nome: str):  # Função para deletar uma pessoa
 
         return "Pessoa deletada com sucesso"
 def atualizar_cidade(nome: str, novo_nome: str):  # Função para atualizar uma cidade
-
+    if level == 0 or level == 1:
+        return admin.pass_error("Você não tem permissão para atualizar a cidade")
     sql = """
     SELECT cidade_id from cidade where cidade_nome = (?); 
     """
@@ -428,7 +449,8 @@ def atualizar_cidade(nome: str, novo_nome: str):  # Função para atualizar uma 
 
         return "Cidade atualizada com sucesso"
 def atualizar_predio(nome: str, novo_nome: str, novo_tipo: str, nova_cidade: str):  # Função para atualizar um predio
-
+    if level == 0 or level == 1:
+        return admin.pass_error("Você não tem permissão para atualizar o prédio")
     sql_check = """
         SELECT predio_id FROM predio WHERE predio_nome = ?;
         """
@@ -454,7 +476,8 @@ def atualizar_predio(nome: str, novo_nome: str, novo_tipo: str, nova_cidade: str
         return "Predio atualizado com sucesso"
 
 def atualizar_pessoa(nome: str, novo_nome: str, novo_emprego: str, novo_predio: int):  # Função para atualizar uma pessoa
-
+    if level == 0 or level == 1:
+        return admin.pass_error("Você não tem permissão para atualizar as pessoas")
     sql_check = """
         SELECT pessoa_id FROM pessoa WHERE pessoa_nome = ?;
         """
@@ -486,7 +509,7 @@ def atualizar_code(code: int):
         return admin.pass_success("Código correto! Têm agora permissões de Morador")
     elif code == 1234:
         level = 2
-        print("Código correto! Têm agora permissões de Visitante - " + str(level))
+        print("Código correto! Têm agora permissões de Admin - " + str(level))
         return admin.pass_success("Código correto! Têm agora permissões de Admin")
     else:
         return admin.pass_error("Código incorreto! Continua com permissões de Visitante")
