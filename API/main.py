@@ -14,9 +14,9 @@ async def root():
     f.inserir_predio("Prédio 2", "Residencial", "São Paulo")
     f.inserir_predio("Prédio 1", "ApartLuxo", "Rio de Janeiro")
     f.inserir_predio("Prédio 3", "Comercial", "São Paulo")
-    f.inserir_pessoa("João", "Professor", 1)
-    f.inserir_pessoa("Maria", "Professora", 1)
-    f.inserir_pessoa("Diogo", "Ladrão", 3)
+    f.inserir_pessoa("João", "Professor", "Prédio 1")
+    f.inserir_pessoa("Maria", "Professora", "Prédio 2")
+    f.inserir_pessoa("Diogo", "Ladrão", "Prédio 2")
     return {"message": "BD Created"}
 #Função para criar o banco de dados e inserir dados iniciais
 
@@ -54,12 +54,12 @@ async def criar_cidade(nome: str):
 #Cria uma cidade
 
 @app.get("/criar_predio/{nome}/{tipo}/{cidade}")
-async def criar_predio(nome: str, tipo: str, cidade: int):
+async def criar_predio(nome: str, tipo: str, cidade: str):
     return f.inserir_predio(nome, tipo, cidade)
 #Cria um prédio
 
 @app.get("/criar_pessoa/{nome}/{emprego}/{predio}")
-async def criar_pessoa(nome: str, emprego: str, predio: int):
+async def criar_pessoa(nome: str, emprego: str, predio: str):
     return f.inserir_pessoa(nome, emprego, predio)
 #Cria uma pessoa
 
@@ -89,7 +89,8 @@ async def atualizar_predio(nome: str, novo_nome: str, novo_tipo: str, nova_cidad
 #Atualiza o nome, tipo e cidade de um prédio
 
 @app.get("/atualizar_pessoa/{nome}/{novo_nome}/{novo_emprego}/{novo_predio}")
-async def atualizar_pessoa(nome: str, novo_nome: str, novo_emprego: str, novo_predio: int):
+async def atualizar_pessoa(nome: str, novo_nome: str, novo_emprego: str, novo_predio: str
+                           ):
     return f.atualizar_pessoa(nome, novo_nome, novo_emprego, novo_predio)
 #Atualiza o nome, emprego e prédio de uma pessoa
 

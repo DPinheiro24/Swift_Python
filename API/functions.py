@@ -26,8 +26,8 @@ def criar_bd():  # Função para criar o banco de dados e inserir dados iniciais
         predio_id integer primary key autoincrement not null ,
         predio_nome text not null,
         predio_tipo text,
-        cidade_id integer not null,
-        foreign key (cidade_id) references cidade(cidade_id)
+        cidade_nome text not null,
+        foreign key (cidade_nome) references cidade(cidade_nome)
         );
     """
 
@@ -42,8 +42,8 @@ def criar_bd():  # Função para criar o banco de dados e inserir dados iniciais
         pessoa_id integer primary key autoincrement not null,
         pessoa_nome text not null,
         emprego text,
-        predio_id integer not null,
-        foreign key (predio_id) references predio(predio_nome)
+        predio_nome text not null,
+        foreign key (predio_nome) references predio(predio_nome)
         );
     """
 
@@ -101,7 +101,7 @@ def inserir_predio(nome, tipo, cidade):  # Função para inserir um prédio
         print("A criar predio com nome: " + nome)
 
     sql = """
-    insert into predio (predio_nome, predio_tipo, cidade_id) values (?, ?, ?);
+    insert into predio (predio_nome, predio_tipo, cidade_nome) values (?, ?, ?);
     """
 
     try:
@@ -114,7 +114,7 @@ def inserir_predio(nome, tipo, cidade):  # Função para inserir um prédio
     predio_dict = {
         "predio_nome": nome,
         "predio_tipo": tipo,
-        "cidade_id": cidade
+        "cidade_nome": cidade
     }
 
     return predio_dict
@@ -123,7 +123,7 @@ def inserir_predio(nome, tipo, cidade):  # Função para inserir um prédio
 def inserir_pessoa(nome, emprego, predio):  # Função para inserir uma pessoa
 
     sql = """
-    select pessoa_id from pessoa where pessoa_nome = (?) and emprego = (?) and predio_id = (?);
+    select pessoa_id from pessoa where pessoa_nome = (?) and emprego = (?) and predio_nome = (?);
     """
 
     cursor.execute(sql, (nome, emprego, predio))
@@ -136,7 +136,7 @@ def inserir_pessoa(nome, emprego, predio):  # Função para inserir uma pessoa
         print("A criar pessoa com nome: " + nome)
 
     sql = """
-    insert into pessoa (pessoa_nome, emprego, predio_id) values (?, ?, ?);
+    insert into pessoa (pessoa_nome, emprego, predio_nome) values (?, ?, ?);
     """
 
     try:
@@ -149,7 +149,7 @@ def inserir_pessoa(nome, emprego, predio):  # Função para inserir uma pessoa
     pessoa_dict = {
         "pessoa_nome": nome,
         "emprego": emprego,
-        "predio_id": predio
+        "predio_nome": predio
     }
 
     return pessoa_dict
@@ -176,7 +176,7 @@ def listar_cidades():
 def listar_pessoas():  # Função para listar as pessoas
 
     sql = """
-    SELECT pessoa_id, pessoa_nome, emprego, predio_id FROM pessoa ;
+    SELECT pessoa_id, pessoa_nome, emprego, predio_nome FROM pessoa ;
     """
     cursor.execute(sql)
     aux = cursor.fetchall()
@@ -187,7 +187,7 @@ def listar_pessoas():  # Função para listar as pessoas
             'pessoa_id': pessoa[0],
             'pessoa_nome': pessoa[1],
             'emprego': pessoa[2],
-            'predio_id': pessoa[3]
+            'predio_nome': pessoa[3]
         }
         pessoas.append(pessoa_dict)
 
@@ -198,7 +198,7 @@ def listar_pessoas():  # Função para listar as pessoas
 
 def listar_pessoa(nome: str):  # Função para listar dados da pessoa
     sql = """
-    SELECT pessoa_id, pessoa_nome, emprego, predio_id FROM pessoa WHERE pessoa_nome = ?;
+    SELECT pessoa_id, pessoa_nome, emprego, predio_nome FROM pessoa WHERE pessoa_nome = ?;
     """
     cursor.execute(sql, (nome,))
     pessoa = cursor.fetchone()
@@ -208,7 +208,7 @@ def listar_pessoa(nome: str):  # Função para listar dados da pessoa
             'pessoa_id': pessoa[0],
             'pessoa_nome': pessoa[1],
             'emprego': pessoa[2],
-            'predio_id': pessoa[3]
+            'predio_nome': pessoa[3]
         }
         return pessoa_dict
     else:
@@ -230,7 +230,7 @@ def listar_pessoas_predio(nome: str):  # Função para listar pessoas de um pré
     sql = """
             SELECT pessoa_nome, emprego
             FROM pessoa
-            WHERE predio_id = ?;
+            WHERE predio_nome = ?;
             """
 
     cursor.execute(sql, (predio[0],))
@@ -248,7 +248,7 @@ def listar_pessoas_predio(nome: str):  # Função para listar pessoas de um pré
 
 def listar_predios():  # Função para listar os prédios
     sql = """
-    SELECT predio_id, predio_nome, predio_tipo, cidade_id FROM predio;
+    SELECT predio_id, predio_nome, predio_tipo, cidade_nome FROM predio;
     """
     cursor.execute(sql)
     aux = cursor.fetchall()
@@ -259,7 +259,7 @@ def listar_predios():  # Função para listar os prédios
             'predio_id': predio[0],
             'predio_nome': predio[1],
             'predio_tipo': predio[2],
-            'cidade_id': predio[3]
+            'cidade_nome': predio[3]
         }
         predios.append(predio_dict)
 
@@ -284,7 +284,7 @@ def adquirir_cidade(nome: str):  # Função para mostrar todos os predios da cid
         sql = """
         SELECT p.predio_nome, p.predio_tipo
         FROM predio p
-        JOIN cidade c ON p.cidade_id = c.cidade_nome
+        JOIN cidade c ON p.cidade_nome = c.cidade_nome
         WHERE c.cidade_nome = ?;
         """
 
@@ -316,7 +316,7 @@ def deletar_cidade(nome: str):  # Função para deletar uma cidade
 
         # Deletar todos os prédios da cidade e suas pessoas associadas
         sql_select_predios = """
-           SELECT predio_id FROM predio WHERE cidade_id = ?;
+           SELECT predio_nome FROM predio WHERE cidade_id = ?;
            """
         cursor.execute(sql_select_predios, (cidade_id,))
         predios = cursor.fetchall()
@@ -326,13 +326,13 @@ def deletar_cidade(nome: str):  # Função para deletar uma cidade
 
             # Deletar todas as pessoas do prédio
             sql_delete_pessoas = """
-               DELETE FROM pessoa WHERE predio_id = ?;
+               DELETE FROM pessoa WHERE predio_nome = ?;
                """
             cursor.execute(sql_delete_pessoas, (predio_id,))
 
             # Deletar o prédio
             sql_delete_predio = """
-               DELETE FROM predio WHERE predio_id = ?;
+               DELETE FROM predio WHERE predio_nome = ?;
                """
             cursor.execute(sql_delete_predio, (predio_id,))
 
@@ -364,13 +364,13 @@ def deletar_predio(nome: str):  # Função para deletar um predio
 
         # Deletar todas as pessoas do prédio
         sql_delete_pessoas = """
-            DELETE FROM pessoa WHERE predio_id = ?;
+            DELETE FROM pessoa WHERE predio_nome = ?;
             """
         cursor.execute(sql_delete_pessoas, (predio_id,))
 
         # Deletar o prédio
         sql_delete_predio = """
-            DELETE FROM predio WHERE predio_id = ?;
+            DELETE FROM predio WHERE predio_nome  = ?;
             """
         cursor.execute(sql_delete_predio, (predio_id,))
 
@@ -441,7 +441,7 @@ def atualizar_predio(nome: str, novo_nome: str, novo_tipo: str, nova_cidade: str
     else:
         print("Predio existe " + str(predio[0]))
         sql_update = """
-            UPDATE predio SET predio_nome = ?, predio_tipo = ?, cidade_id = (
+            UPDATE predio SET predio_nome = ?, predio_tipo = ?, cidade_nome = (
                 SELECT cidade_id FROM cidade WHERE cidade_nome = ?
             ) WHERE predio_id = ?;
             """
@@ -467,7 +467,7 @@ def atualizar_pessoa(nome: str, novo_nome: str, novo_emprego: str, novo_predio: 
     else:
         print("Pessoa existe " + str(pessoa[0]))
         sql_update = """
-            UPDATE pessoa SET pessoa_nome = ?, emprego = ?, predio_id = ? WHERE pessoa_id = ?;
+            UPDATE pessoa SET pessoa_nome = ?, emprego = ?, predio_nome = ? WHERE pessoa_id = ?;
             """
 
         cursor.execute(sql_update, (novo_nome, novo_emprego, novo_predio, pessoa[0]))
