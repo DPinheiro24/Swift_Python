@@ -17,6 +17,8 @@ async def root():
     f.inserir_pessoa("João", "Professor", "Prédio1")
     f.inserir_pessoa("Maria", "Professora", "Prédio 2")
     f.inserir_pessoa("Diogo", "Ladrão", "Prédio 2")
+    f.inserir_predio("Predio 4", "Mansao", "Belo Horizonte")
+    f.inserir_pessoa("Daniel", "Atleta", "Predio 4")
     return {"message": "BD Created"}
 #Função para criar o banco de dados e inserir dados iniciais
 
