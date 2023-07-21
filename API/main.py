@@ -6,19 +6,66 @@ app = FastAPI(debug=True)
 
 @app.get("/")
 async def root():
+
     f.criar_bd()
+
+    #cidades
+
     f.inserir_cidade("São Paulo")
     f.inserir_cidade("Rio de Janeiro")
     f.inserir_cidade("Belo Horizonte")
     f.inserir_cidade("Cidade de Sol")
+    f.inserir_cidade("Buenos Aires")
+
+    #Prédios
+
+    #Predio de São Paulo
     f.inserir_predio("Prédio 2", "Residencial", "São Paulo")
-    f.inserir_predio("Prédio1", "ApartLuxo", "Rio de Janeiro")
     f.inserir_predio("Prédio 3", "Comercial", "São Paulo")
-    f.inserir_pessoa("João", "Professor", "Prédio1")
+
+    # Predio de Rio de Janeiro
+    f.inserir_predio("Prédio 1", "Comercial", "Rio de Janeiro")
+    f.inserir_predio("Prédio 4", "Residencial", "Rio de Janeiro")
+
+    # Predio de Belo Horizonte
+    f.inserir_predio("Prédio 6", "Residencial", "Belo Horizonte")
+    f.inserir_predio("Prédio 5", "Comercial", "Belo Horizonte")
+
+    # Predio de Cidade de Sol
+    f.inserir_predio("Prédio 9", "Comercial", "Cidade de Sol")
+    f.inserir_predio("Prédio 7", "ApartLuxo", "Cidade de Sol")
+
+    # Predio de Buenos Aires
+    f.inserir_predio("Prédio 8", "Residencial", "Buenos Aires")
+    f.inserir_predio("Prédio 10", "Comercial", "Buenos Aires")
+
+    #Pessoas
+
+    #Pessoas do Prédio do Rio de Janeiro
     f.inserir_pessoa("Maria", "Professora", "Prédio 2")
-    f.inserir_pessoa("Diogo", "Ladrão", "Prédio 2")
-    f.inserir_predio("Predio 4", "Mansao", "Belo Horizonte")
+    f.inserir_pessoa("Johny Bigodes", "Canalizador", "Prédio 3")
+    f.inserir_pessoa("Tuga", "Genecologista", "Prédio 2")
+
+    # Pessoas do Prédio de São Paulo
+    f.inserir_pessoa("João", "Professor", "Prédio 1")
     f.inserir_pessoa("Daniel", "Atleta", "Predio 4")
+    f.inserir_pessoa("Andreia Bigodes", "Medica", "Prédio 4")
+
+    # Pessoas do Prédio de Belo Horizonte
+    f.inserir_pessoa("Diogo", "Ladrão", "Prédio 6")
+    f.inserir_pessoa("Andre", "Politico", "Prédio 5")
+    f.inserir_pessoa("Rafael", "Surfista", "Prédio 6")
+
+    # Pessoas do Prédio da Cidade de Sol
+    f.inserir_pessoa("Antonio", "Programador", "Prédio 9")
+    f.inserir_pessoa("Ricardo", "Pedreiro", "Prédio 7")
+    f.inserir_pessoa("Paola", "Dentista", "Prédio 9")
+
+    # Pessoas do Prédio de Buenos Aires
+    f.inserir_pessoa("Jose", "Operador", "Prédio 8")
+    f.inserir_pessoa("Armindo", "Informatico", "Prédio 10")
+    f.inserir_pessoa("Pedro", "Agricultor", "Prédio 8")
+    
     return {"message": "BD Created"}
 #Função para criar o banco de dados e inserir dados iniciais
 
